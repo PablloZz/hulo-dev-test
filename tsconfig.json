@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "allowJs": true,
+    "target": "ESNext",
+    "noImplicitAny": true
+  },
+  "include": ["./src/**/*"]
+}
