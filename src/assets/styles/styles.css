@@ -39,6 +39,65 @@ body {
   width: 250px;
 }
 
+.previous-slide,
+.next-slide {
+  position: absolute;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 35px;
+  font-size: 18px;
+  font-weight: bold;
+  color: hsl(0 0% 90%);
+  background: hsl(0 0% 40% / 80%);
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+:is(.previous-slide, .next-slide):hover {
+  background: hsl(0 0% 40%);
+}
+
+.previous-slide {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.next-slide {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.previous-slide::after,
+.next-slide::after {
+  content: "";
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  border-top: 2px solid hsl(0 0% 90%);
+  border-left: 2px solid hsl(0 0% 90%);
+}
+
+.previous-slide::after {
+  left: calc(50% - 3px);
+  transform: rotate(-45deg);
+}
+
+.next-slide::after {
+  right: calc(50% - 3px);
+  transform: rotate(135deg);
+}
+
 @media (max-width: 1100px) {
   .slider-overlay {
     position: relative;
