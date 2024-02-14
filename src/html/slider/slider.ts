@@ -15,6 +15,10 @@ const nextSlideButton = document.querySelector(
 const previousSlideButton = document.querySelector(
   ".previous-slide"
 ) as HTMLButtonElement;
+const expandedSlide = document.querySelector(
+  ".expanded-slide"
+) as HTMLDivElement;
+let currentPlayer: typeof Vimeo;
 
 function getPreviousSlide() {
   const sliderPosition = getSliderPosition(slider);
@@ -46,6 +50,13 @@ function getNextSlide() {
   slider.style.setProperty("--slider-translate", newSliderPosition);
 }
 
+function closeExpandedSlide(event: MouseEvent) {
+  if (event.target === this) {
+    expandedSlide.parentElement.classList.toggle("hide");
+    currentPlayer.destroy();
+  }
+}
+
 async function initSlidePreview(slideNumber: number) {
   const slideId = `slide-${slideNumber}`;
   const slide = createElement<HTMLDivElement>("div", ["slide"], {
@@ -54,14 +65,25 @@ async function initSlidePreview(slideNumber: number) {
 
   try {
     const video = await vimeoApi.getVideo();
-    const { videoAuthor, videoPreviewSource, videoTitle } = video;
+    const { videoAuthor, videoId, videoPreviewSource, videoTitle } = video;
     const videoPreview = createElement<HTMLImageElement>("img", [], {
       src: videoPreviewSource,
       alt: `${videoTitle} video preview by ${videoAuthor}`,
     });
     slide.appendChild(videoPreview);
+
+    slide.addEventListener("click", () => {
+      openVideo(videoId);
+      expandedSlide.parentElement.classList.toggle("hide");
+    });
   } catch (error) {
     console.error(error);
+  }
+
+  function openVideo(id: number) {
+    const vimeoOptions = { id, autoplay: true };
+    const player = new Vimeo.Player(expandedSlide, vimeoOptions);
+    currentPlayer = player;
   }
 
   slider.appendChild(slide);
@@ -77,6 +99,7 @@ function initSlider() {
   initSlidesPreview();
   previousSlideButton.addEventListener("click", getPreviousSlide);
   nextSlideButton.addEventListener("click", getNextSlide);
+  expandedSlide.parentElement.addEventListener("click", closeExpandedSlide);
 }
 
 export { initSlider };
