@@ -1,0 +1,3 @@
+const END_SLIDER_POSITION = -1000;
+
+export { END_SLIDER_POSITION };
