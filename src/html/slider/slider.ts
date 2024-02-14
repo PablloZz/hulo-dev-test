@@ -6,7 +6,10 @@ import {
   END_SLIDER_POSITION,
   SLIDES_COUNT,
 } from "./libs/constants/constants.js";
-import { getSliderPosition } from "./libs/helpers/helpers.js";
+import {
+  clearDotsActiveState,
+  getSliderPosition,
+} from "./libs/helpers/helpers.js";
 
 const slider = document.querySelector(".slider") as HTMLDivElement;
 const nextSlideButton = document.querySelector(
@@ -18,6 +21,7 @@ const previousSlideButton = document.querySelector(
 const expandedSlide = document.querySelector(
   ".expanded-slide"
 ) as HTMLDivElement;
+const dots = document.querySelector(".dots") as HTMLDivElement;
 let currentPlayer: typeof Vimeo;
 
 function getPreviousSlide() {
@@ -53,6 +57,7 @@ function getNextSlide() {
 function closeExpandedSlide(event: MouseEvent) {
   if (event.target === this) {
     expandedSlide.parentElement.classList.toggle("hide");
+    clearDotsActiveState(dots);
     currentPlayer.destroy();
   }
 }
@@ -72,9 +77,19 @@ async function initSlidePreview(slideNumber: number) {
     });
     slide.appendChild(videoPreview);
 
+    const dot = createElement<HTMLButtonElement>("button", ["dot"]);
+    dots.appendChild(dot);
+
     slide.addEventListener("click", () => {
       openVideo(videoId);
+      dot.classList.add("active");
       expandedSlide.parentElement.classList.toggle("hide");
+    });
+    dot.addEventListener("click", () => {
+      currentPlayer.destroy();
+      clearDotsActiveState(dots);
+      dot.classList.add("active");
+      openVideo(videoId);
     });
   } catch (error) {
     console.error(error);
