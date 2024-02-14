@@ -1,0 +1,67 @@
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  background: hsl(120, 100%, 97%);
+  padding: 50px 15px 15px;
+}
+
+.slider-overlay {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  overflow: hidden;
+}
+
+.slider {
+  --slider-translate: 0px;
+
+  display: flex;
+  transform: translateX(var(--slider-translate));
+  transition: transform 1s ease;
+}
+
+.slide {
+  width: 250px;
+}
+
+.slide > img {
+  cursor: pointer;
+  width: 250px;
+}
+
+@media (max-width: 1100px) {
+  .slider-overlay {
+    position: relative;
+    width: 100%;
+    max-width: 750px;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 800px) {
+  .slider-overlay {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 600px) {
+  .slider-overlay {
+    position: relative;
+    width: 100%;
+    max-width: 250px;
+    overflow: hidden;
+  }
+}
