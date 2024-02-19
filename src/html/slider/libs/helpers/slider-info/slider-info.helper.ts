@@ -14,6 +14,15 @@ class SliderInfo {
     );
     return Number.parseInt(sliderGapWidth);
   }
+
+  getPosition() {
+    const sliderTranslate = getPropertyValue<HTMLDivElement>(
+      this.slider,
+      "--slider-translate"
+    );
+
+    return Number.parseInt(sliderTranslate);
+  }
 }
 
 export { SliderInfo };

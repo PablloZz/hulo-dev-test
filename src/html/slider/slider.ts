@@ -6,10 +6,7 @@ import {
   END_SLIDER_POSITION,
   SLIDES_COUNT,
 } from "./libs/constants/constants.js";
-import {
-  clearDotsActiveState,
-  getSliderPosition,
-} from "./libs/helpers/helpers.js";
+import { clearDotsActiveState, sliderInfo } from "./libs/helpers/helpers.js";
 
 const slider = document.querySelector(".slider") as HTMLDivElement;
 const nextSlideButton = document.querySelector(
@@ -25,7 +22,7 @@ const dots = document.querySelector(".dots") as HTMLDivElement;
 let currentPlayer: typeof Vimeo;
 
 function getPreviousSlide() {
-  const sliderPosition = getSliderPosition(slider);
+  const sliderPosition = sliderInfo.getPosition();
   const isStartPosition = sliderPosition === START_SLIDER_POSITION;
   let newSliderPosition: string;
 
@@ -40,7 +37,7 @@ function getPreviousSlide() {
 }
 
 function getNextSlide() {
-  const sliderPosition = getSliderPosition(slider);
+  const sliderPosition = sliderInfo.getPosition();
   const isEndPosition = sliderPosition <= END_SLIDER_POSITION;
   let newSliderPosition: string;
 
