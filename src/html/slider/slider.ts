@@ -1,12 +1,18 @@
 import { vimeoApi } from "~/packages/vimeo/vimeo.js";
-import { createElement } from "~/libs/helpers/helpers.js";
+import {
+  convertNumberToPixelString,
+  createElement,
+} from "~/libs/helpers/helpers.js";
 import {
   START_SLIDER_POSITION,
-  SLIDE_WIDTH,
-  END_SLIDER_POSITION,
   SLIDES_COUNT,
 } from "./libs/constants/constants.js";
-import { clearDotsActiveState, sliderInfo } from "./libs/helpers/helpers.js";
+import {
+  clearDotsActiveState,
+  getSlideWidth,
+  sliderInfo,
+} from "./libs/helpers/helpers.js";
+import { visibleSlidesCount } from "./libs/enums/enums.js";
 
 const slider = document.querySelector(".slider") as HTMLDivElement;
 const nextSlideButton = document.querySelector(
@@ -19,6 +25,7 @@ const expandedSlide = document.querySelector(
   ".expanded-slide"
 ) as HTMLDivElement;
 const dots = document.querySelector(".dots") as HTMLDivElement;
+let endSliderPosition: number;
 let currentPlayer: typeof Vimeo;
 
 function getPreviousSlide() {
@@ -27,27 +34,29 @@ function getPreviousSlide() {
   let newSliderPosition: string;
 
   if (isStartPosition) {
-    newSliderPosition = `${END_SLIDER_POSITION}px`;
+    newSliderPosition = convertNumberToPixelString(-endSliderPosition);
     slider.style.setProperty("--slider-translate", newSliderPosition);
     return;
   }
 
-  newSliderPosition = `${sliderPosition + SLIDE_WIDTH}px`;
+  const sliderShift = sliderInfo.getShift();
+  newSliderPosition = convertNumberToPixelString(sliderPosition + sliderShift);
   slider.style.setProperty("--slider-translate", newSliderPosition);
 }
 
 function getNextSlide() {
   const sliderPosition = sliderInfo.getPosition();
-  const isEndPosition = sliderPosition <= END_SLIDER_POSITION;
+  const isEndPosition = Math.abs(sliderPosition) >= endSliderPosition;
   let newSliderPosition: string;
 
   if (isEndPosition) {
-    newSliderPosition = `${START_SLIDER_POSITION}px`;
+    newSliderPosition = convertNumberToPixelString(START_SLIDER_POSITION);
     slider.style.setProperty("--slider-translate", newSliderPosition);
     return;
   }
 
-  newSliderPosition = `${sliderPosition - SLIDE_WIDTH}px`;
+  const sliderShift = sliderInfo.getShift();
+  newSliderPosition = convertNumberToPixelString(sliderPosition - sliderShift);
   slider.style.setProperty("--slider-translate", newSliderPosition);
 }
 
@@ -101,17 +110,49 @@ async function initSlidePreview(slideNumber: number) {
   slider.appendChild(slide);
 }
 
-function initSlidesPreview() {
+async function initSlidesPreview() {
   for (let index = 1; index <= SLIDES_COUNT; index++) {
-    initSlidePreview(index);
+    await initSlidePreview(index);
   }
 }
 
-function initSlider() {
-  initSlidesPreview();
+function setSliderWidth() {
+  const sliderOverlay = document.querySelector(
+    ".slider-overlay"
+  ) as HTMLDivElement;
+
+  const windowWidth = window.innerWidth;
+  const slidesToShowCount = sliderInfo.getVisibleSlidesCount(windowWidth);
+  const hiddenSlidesCount = SLIDES_COUNT - slidesToShowCount;
+  const slideWidth = getSlideWidth();
+  const sliderGapWidth = sliderInfo.getGapWidth();
+  endSliderPosition =
+    hiddenSlidesCount * slideWidth + hiddenSlidesCount * sliderGapWidth;
+
+  if (slidesToShowCount === visibleSlidesCount.ONE) {
+    sliderOverlay.style.width = convertNumberToPixelString(slideWidth);
+  } else {
+    const sliderVisibleGapsCount = slidesToShowCount - 1;
+    const sliderVisibleGapsWidth = sliderVisibleGapsCount * sliderGapWidth;
+    const sliderWidth = slideWidth * slidesToShowCount + sliderVisibleGapsWidth;
+    sliderOverlay.style.width = convertNumberToPixelString(sliderWidth);
+  }
+}
+
+async function initSlider() {
+  await initSlidesPreview();
+  setSliderWidth();
+
   previousSlideButton.addEventListener("click", getPreviousSlide);
   nextSlideButton.addEventListener("click", getNextSlide);
   expandedSlide.parentElement.addEventListener("click", closeExpandedSlide);
+  window.addEventListener("resize", () => {
+    setSliderWidth();
+    slider.style.setProperty(
+      "--slider-translate",
+      convertNumberToPixelString(START_SLIDER_POSITION)
+    );
+  });
 }
 
 export { initSlider };
