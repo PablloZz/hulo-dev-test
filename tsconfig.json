@@ -3,7 +3,11 @@
     "outDir": "./build",
     "allowJs": true,
     "target": "ESNext",
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   },
   "include": ["./src/**/*"]
 }
