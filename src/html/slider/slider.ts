@@ -1,5 +1,5 @@
-import { vimeoApi } from "../../packages/vimeo/vimeo.js";
-import { createElement } from "../../libs/helpers/helpers.js";
+import { vimeoApi } from "~/packages/vimeo/vimeo.js";
+import { createElement } from "~/libs/helpers/helpers.js";
 import {
   START_SLIDER_POSITION,
   SLIDE_WIDTH,
