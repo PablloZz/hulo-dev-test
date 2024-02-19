@@ -1,3 +1,3 @@
-import { initSlider } from "./html/slider/slider.js";
+import { initSlider } from "./components/slider/slider.js";
 
 initSlider();
