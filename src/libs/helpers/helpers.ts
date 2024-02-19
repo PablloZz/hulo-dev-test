@@ -1,1 +1,1 @@
-export { createElement } from "./dom/dom.js";
+export { createElement, getPropertyValue } from "./dom/dom.js";
